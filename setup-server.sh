@@ -10,8 +10,7 @@ fi
 NEW_USER=doorlock
 
 apt update
-apt install python3 python3-rpi.gpio python3-pip supervisor gunicorn
-# FIXME not sure which packages above are already installed
+apt -y install supervisor gunicorn
 useradd -m -G gpio $NEW_USER
 runuser -l $NEW_USER -c 'git clone https://github.com/GregoryConrad/doorlock'
 runuser -l $NEW_USER -c 'pip3 install -r doorlock/requirements.txt'
@@ -41,7 +40,6 @@ user=$NEW_USER
 autostart=true
 autorestart=true
 redirect_stderr=true
-
 EOF
 
 echo "Rebooting in 10 seconds (CTRL-C to cancel)..."
