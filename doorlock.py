@@ -11,31 +11,43 @@ def get_file(filename):
     return os.path.join(pathlib.Path(__file__).parent, filename)
 
 
-client_secrets_file = get_file("client_secret.json")
-# TODO check these scopes
-scopes = ["https://www.googleapis.com/auth/userinfo.profile",
-          "https://www.googleapis.com/auth/userinfo.email", "openid"]
+# App constants
 app_secret_key_file = get_file("app_secret_key.txt")
-
+client_secrets_file = get_file("client_secret.json")
+scopes = [
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/userinfo.email",
+    "openid",
+]
 app = flask.Flask("doorlock")
 
+# Configure authorized_emails
+authorized_emails = set()
+with open(get_file("authorized_emails.txt"), "r") as ids:
+    for id in ids:
+        authorized_emails.add(id.rstrip())
+if '' in authorized_emails:
+    authorized_emails.remove('')
+
+# Configure app.secret_key (create one if it does not exist yet)
 if not os.path.exists(app_secret_key_file):
     with open(app_secret_key_file, "w") as file:
         chars = string.ascii_letters + string.digits
         file.write("".join(random.choice(chars) for i in range(128)))
-
 with open(app_secret_key_file, "r") as file:
     app.secret_key = file.read().rstrip()
 
+
+# TODO
 # SEE https://developers.google.com/identity/protocols/oauth2/web-server#python
 # SEE https://flasksession.readthedocs.io/en/latest/
 
 
 def login_required(function):
     def wrapper(*args, **kwargs):
-        if "google_id" not in flask.session:
+        if "email" not in flask.session:
             return flask.redirect("/login")
-        elif False:  # TODO not authorized
+        elif flask.session["email"] not in authorized_emails:
             flask.session.clear()
             return flask.abort(401)
         else:
@@ -80,8 +92,8 @@ def login_callback():
         audience=GOOGLE_CLIENT_ID
     )
 
-    flask.session["google_id"] = id_info.get("sub")
     flask.session["name"] = id_info.get("name")
+    flask.session["email"] = id_info.get("email")
     return flask.redirect("/")
 
 

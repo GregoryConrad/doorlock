@@ -1,5 +1,6 @@
 # doorlock specific files
 client_secret.json
+authorized_emails.txt
 app_secret_key.txt
 server.crt
 server.key

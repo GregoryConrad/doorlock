@@ -12,6 +12,11 @@ Here is my setup:
 - Push button connected to `__` to lock the door
 - Push button connected to `__` to unlock the door
 - Server running on port `39420` (see `gunicorn.conf.py`)
+- Files needed for the server:
+  - `client_secret.json` for Google OAuth 2
+  - `authorized_emails.txt` with one authorized email per line
+  - `server.crt` for HTTPS
+  - `server.key` for HTTPS
 
 # General Pi Setup
 - `setup-server.sh` will set up doorlock to run in the background
