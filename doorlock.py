@@ -12,12 +12,10 @@ import servo_control
 
 
 def get_file(filename):
-    return os.path.join(pathlib.Path(__file__).parent, filename)
+    return os.path.join(os.getcwd(), filename)
 
 
 # App constants
-SESSION_TYPE = "filesystem"
-SESSION_USE_SIGNER = True
 SCOPES = [
     "https://www.googleapis.com/auth/userinfo.profile",
     "https://www.googleapis.com/auth/userinfo.email",
@@ -27,6 +25,8 @@ authorized_emails_file = get_file("authorized_emails.txt")
 app_secret_key_file = get_file("app_secret_key.txt")
 client_secrets_file = get_file("client_secret.json")
 app = flask.Flask(__name__)
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_USE_SIGNER"] = True
 Session(app)
 
 # Get Google client ID
