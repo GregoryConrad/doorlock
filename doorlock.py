@@ -1,23 +1,31 @@
 import os
 import pathlib
 import flask
+import string
+import random
 import google_auth_oauthlib.flow
+import servo_control
 
-client_secrets_file = os.path.join(
-    pathlib.Path(__file__).parent, "client_secret.json")
+
+def get_file(filename):
+    return os.path.join(pathlib.Path(__file__).parent, filename)
+
+
+client_secrets_file = get_file("client_secret.json")
 # TODO check these scopes
 scopes = ["https://www.googleapis.com/auth/userinfo.profile",
           "https://www.googleapis.com/auth/userinfo.email", "openid"]
+app_secret_key_file = get_file("app_secret_key.txt")
 
 app = flask.Flask("doorlock")
-# FIXME: A secret key is included in the sample so that it works.
-# If you use this code in your application, replace this with a truly secret
-# key. See https://flask.palletsprojects.com/quickstart/#sessions.
-# Probably just get some bytes from random and save to a file
-# if secret_key file DNE:
-#   create secret_key file from 128 random bytes
-# read app.secret_key from secret_key file
-app.secret_key = "REPLACE ME - this value is here as a placeholder."
+
+if not os.path.exists(app_secret_key_file):
+    with open(app_secret_key_file, "w") as file:
+        chars = string.ascii_letters + string.digits
+        file.write("".join(random.choice(chars) for i in range(128)))
+
+with open(app_secret_key_file, "r") as file:
+    app.secret_key = file.read().rstrip()
 
 # SEE https://developers.google.com/identity/protocols/oauth2/web-server#python
 # SEE https://flasksession.readthedocs.io/en/latest/
@@ -93,14 +101,14 @@ def index():
 @app.route("/unlock")
 @login_required
 def unlock():
-    # TODO unlock the door using GPIO
+    servo_control.unlock()
     return "Door unlocked!"
 
 
 @app.route("/lock")
 @login_required
 def lock():
-    # TODO lock the door using GPIO
+    servo_control.lock()
     return "Door locked!"
 
 

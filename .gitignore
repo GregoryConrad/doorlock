@@ -1,3 +1,9 @@
+# doorlock specific files
+client_secret.json
+app_secret_key.txt
+server.crt
+server.key
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
