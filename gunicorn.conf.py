@@ -1,12 +1,11 @@
 # See https://docs.gunicorn.org/en/stable/settings.html#settings
 
 import os
-import pathlib
 import multiprocessing
 
 
 def get_file(filename):
-    return os.path.join(pathlib.Path(__file__).parent, filename)
+    return os.path.join(os.getcwd(), filename)
 
 
 bind = "0.0.0.0:39420"
