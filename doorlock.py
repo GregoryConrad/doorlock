@@ -3,7 +3,11 @@ import pathlib
 import flask
 import string
 import random
+import requests
+import json
 import google_auth_oauthlib.flow
+import google.oauth2.id_token
+from flask_session import Session
 import servo_control
 
 
@@ -12,35 +16,38 @@ def get_file(filename):
 
 
 # App constants
-app_secret_key_file = get_file("app_secret_key.txt")
-client_secrets_file = get_file("client_secret.json")
-scopes = [
+SESSION_TYPE = "filesystem"
+SESSION_USE_SIGNER = True
+SCOPES = [
     "https://www.googleapis.com/auth/userinfo.profile",
     "https://www.googleapis.com/auth/userinfo.email",
     "openid",
 ]
-app = flask.Flask("doorlock")
+authorized_emails_file = get_file("authorized_emails.txt")
+app_secret_key_file = get_file("app_secret_key.txt")
+client_secrets_file = get_file("client_secret.json")
+app = flask.Flask(__name__)
+Session(app)
 
-# Configure authorized_emails
+# Get Google client ID
+with open(client_secrets_file, "r") as client_secrets:
+    google_client_id = json.load(client_secrets)["web"]["client_id"]
+
+# Get authorized_emails
 authorized_emails = set()
-with open(get_file("authorized_emails.txt"), "r") as ids:
-    for id in ids:
-        authorized_emails.add(id.rstrip())
+with open(authorized_emails_file, "r") as emails:
+    for email in emails:
+        authorized_emails.add(email.rstrip())
 if '' in authorized_emails:
     authorized_emails.remove('')
 
-# Configure app.secret_key (create one if it does not exist yet)
+# Get app.secret_key (create one if it does not exist yet)
 if not os.path.exists(app_secret_key_file):
     with open(app_secret_key_file, "w") as file:
         chars = string.ascii_letters + string.digits
         file.write("".join(random.choice(chars) for i in range(128)))
 with open(app_secret_key_file, "r") as file:
     app.secret_key = file.read().rstrip()
-
-
-# TODO
-# SEE https://developers.google.com/identity/protocols/oauth2/web-server#python
-# SEE https://flasksession.readthedocs.io/en/latest/
 
 
 def login_required(function):
@@ -58,7 +65,7 @@ def login_required(function):
 @app.route("/login")
 def login():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        client_secrets_file, scopes)
+        client_secrets_file, SCOPES)
     flow.redirect_uri = flask.url_for("login_callback", _external=True)
     authorization_url, state = flow.authorization_url(
         access_type="offline", include_granted_scopes="true")
@@ -75,25 +82,22 @@ def logout():
 @app.route("/login-callback")
 def login_callback():
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        client_secrets_file, scopes, state=flask.session["state"])
+        client_secrets_file, SCOPES, state=flask.session["state"])
     flow.redirect_uri = flask.url_for("login_callback", _external=True)
     flow.fetch_token(authorization_response=flask.request.url)
 
-    # TODO check the following
-    credentials = flow.credentials
-    request_session = requests.session()
-    cached_session = cachecontrol.CacheControl(request_session)
-    token_request = google.auth.transport.requests.Request(
-        session=cached_session)
+    if flask.session["state"] != flask.request.args["state"]:
+        return flask.abort(500)
 
-    id_info = id_token.verify_oauth2_token(
-        id_token=credentials._id_token,
-        request=token_request,
-        audience=GOOGLE_CLIENT_ID
+    id_info = google.oauth2.id_token.verify_oauth2_token(
+        id_token=flow.credentials._id_token,
+        request=requests.session(),
+        audience=google_client_id,
     )
 
     flask.session["name"] = id_info.get("name")
-    flask.session["email"] = id_info.get("email")
+    if id_info.get("email_verified"):
+        flask.session["email"] = id_info.get("email")
     return flask.redirect("/")
 
 
