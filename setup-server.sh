@@ -19,7 +19,7 @@ runuser -l $NEW_USER -c 'pip3 install -r doorlock/requirements.txt'
 DOORLOCK_PATH=/home/$NEW_USER/doorlock
 cat << EOF >> /etc/supervisor/supervisord.conf
 [program:doorlock]
-command=/usr/bin/gunicorn doorlock:app
+command=gunicorn doorlock:app
 directory=$DOORLOCK_PATH
 user=$NEW_USER
 autostart=true

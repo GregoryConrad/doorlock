@@ -1,13 +1,12 @@
 import os
-import pathlib
-import flask
 import string
 import random
 import requests
 import json
+import flask
+import flask_session
 import google_auth_oauthlib.flow
 import google.oauth2.id_token
-from flask_session import Session
 import servo_control
 
 
@@ -27,7 +26,7 @@ client_secrets_file = get_file("client_secret.json")
 app = flask.Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_USE_SIGNER"] = True
-Session(app)
+flask_session.Session(app)
 
 # Get Google client ID
 with open(client_secrets_file, "r") as client_secrets:

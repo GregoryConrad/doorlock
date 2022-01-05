@@ -1,11 +1,12 @@
 import sys
 from gpiozero import Servo, Button
 
-servo_pin = None  # TODO
-lock_pin = None  # TODO
-unlock_pin = None  # TODO
+servo_pin = 17
+lock_pin = 5
+unlock_pin = 13
 
 servo = Servo(servo_pin)
+
 
 def lock():
     servo.max()
