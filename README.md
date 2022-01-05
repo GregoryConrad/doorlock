@@ -19,7 +19,11 @@ This is done through:
   - `client_secret.json` for Google OAuth 2
   - `authorized_emails.txt` for email whitelisting (with one authorized email per line)
   - `server.crt` for HTTPS
+    - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
+    - `ln -s /etc/letsencrypt/live/your-domain/fullchain.pem server.crt`
   - `server.key` for HTTPS
+    - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
+    - `ln -s /etc/letsencrypt/live/your-domain/privkey.pem server.key`
 - Server running on port `39420` (see `gunicorn.conf.py`)
 - Use ssh key login and change the default password for `pi`
 - Port forward the needed port to your pi
