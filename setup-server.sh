@@ -42,6 +42,5 @@ autorestart=true
 redirect_stderr=true
 EOF
 
-echo "Rebooting in 10 seconds (CTRL-C to cancel)..."
-sleep 10
-reboot
+echo "Please create the 4 required files (see $DOORLOCK_PATH/README.md) in $DOORLOCK_PATH/"
+echo "After the 4 files are created, reboot the Raspberry Pi"
