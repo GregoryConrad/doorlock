@@ -49,7 +49,7 @@ with open(app_secret_key_file, "r") as file:
     app.secret_key = file.read().rstrip()
 
 
-def login_required(function):
+def auth_required(function):
     def wrapper(*args, **kwargs):
         if "email" not in flask.session:
             return flask.redirect("/login")
@@ -71,12 +71,6 @@ def login():
         access_type="offline", include_granted_scopes="true")
     flask.session["state"] = state
     return flask.redirect(authorization_url)
-
-
-@app.route("/logout")
-def logout():
-    flask.session.clear()
-    return flask.redirect("/")
 
 
 @app.route("/login-callback")
@@ -102,27 +96,26 @@ def login_callback():
 
 
 @app.route("/")
-@login_required
+@auth_required
 def index():
     return f"""Hello {flask.session["name"]}! Here are your options:
 <br>
 <form>
   <button formaction="/lock">Lock door</button>
   <button formaction="/unlock">Unlock door</button>
-  <button formaction="/logout">Logout</button>
 </form>
 """
 
 
 @app.route("/unlock")
-@login_required
+@auth_required
 def unlock():
     servo_control.unlock()
     return "Door unlocked!"
 
 
 @app.route("/lock")
-@login_required
+@auth_required
 def lock():
     servo_control.lock()
     return "Door locked!"
