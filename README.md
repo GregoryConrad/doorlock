@@ -5,7 +5,8 @@ Raspberry Pi project that will lock/unlock a door attached to a servo.
 This is done through:
 - A Python Flask web application
   - Google accounts used for authentication (with an email whitelist)
-- Two background processes that monitor for lock/unlock button presses
+- Two background processes that listen to lock/unlock button presses
+  - Used as a manual override in case your internet goes down or you don't want to get out your phone
 
 # Server Setup Suggestions
 - Raspberry Pi OS Lite
