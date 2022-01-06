@@ -4,6 +4,7 @@ authorized_emails.txt
 app_secret_key.txt
 server.crt
 server.key
+flask_session
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
