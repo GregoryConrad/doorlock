@@ -2,7 +2,7 @@ import os
 import string
 import random
 import json
-from datetime import timedelta
+import datetime
 import flask
 import flask_session
 import google.auth.transport.requests
@@ -27,7 +27,7 @@ client_secrets_file = get_file("client_secret.json")
 app = flask.Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_USE_SIGNER"] = True
-app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(days=365)
+app.config["PERMANENT_SESSION_LIFETIME"] = datetime.timedelta(days=365)
 flask_session.Session(app)
 
 # Get Google client ID
