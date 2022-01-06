@@ -1,10 +1,10 @@
 import os
 import string
 import random
-import requests
 import json
 import flask
 import flask_session
+import google.auth.transport.requests
 import google_auth_oauthlib.flow
 import google.oauth2.id_token
 import servo_control
@@ -58,6 +58,7 @@ def login_required(function):
             return flask.abort(401)
         else:
             return function()
+    wrapper.__name__ = function.__name__
     return wrapper
 
 
@@ -90,7 +91,7 @@ def login_callback():
 
     id_info = google.oauth2.id_token.verify_oauth2_token(
         id_token=flow.credentials._id_token,
-        request=requests.session(),
+        request=google.auth.transport.requests.Request(),
         audience=google_client_id,
     )
 
