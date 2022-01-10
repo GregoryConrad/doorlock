@@ -17,7 +17,7 @@ runuser -l $NEW_USER -c 'pip3 install -r doorlock/requirements.txt'
 
 DOORLOCK_PATH=/home/$NEW_USER/doorlock
 cat << EOF >> /etc/supervisor/supervisord.conf
-[program:doorlock]
+[program:doorlock-server]
 command=gunicorn doorlock:app
 directory=$DOORLOCK_PATH
 user=$NEW_USER
@@ -34,5 +34,5 @@ autorestart=true
 redirect_stderr=true
 EOF
 
-echo "Please create the 4 required files (see $DOORLOCK_PATH/README.md) in $DOORLOCK_PATH/"
-echo "After the 4 files are created, reboot the Raspberry Pi"
+echo "Please create the 2 required files (see $DOORLOCK_PATH/README.md) in $DOORLOCK_PATH/"
+echo "After the 2 files are created, reboot the Raspberry Pi"

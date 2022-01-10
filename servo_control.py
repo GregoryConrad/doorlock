@@ -1,40 +1,38 @@
-import threading
+from multiprocessing.connection import Listener, Client
 from gpiozero import Servo, Button
+from doorlock_config import config
 
-servo_pin = 17
-lock_pin = 5
-unlock_pin = 13
-
-servo = Servo(servo_pin)
-monitor_thread_lock = threading.Lock()
+servo_pin = config['pins']['servo']
+lock_pin = config['pins']['lockButon']
+unlock_pin = config['pins']['unlockButton']
+ipc_address = ('localhost', config['ipcPort'])
+on_startup = config['onStartup']
+servo_mapping = config['servoMapping']
 
 
 def lock():
-    servo.max()
+    with Client(ipc_address) as conn:
+        conn.send('lock')
 
 
 def unlock():
-    servo.min()
-
-
-class MonitorThread(threading.Thread):
-    def __init__(self, function, pin):
-        threading.Thread.__init__(self)
-        self.function = function
-        self.pin = pin
-
-    def run(self):
-        btn = Button(self.pin)
-        while True:
-            btn.wait_for_active()
-            btn.wait_for_inactive()
-            monitor_thread_lock.acquire()
-            function()
-            monitor_thread_lock.release()
+    with Client(ipc_address) as conn:
+        conn.send('unlock')
 
 
 if __name__ == '__main__':
-    lock_monitor = MonitorThread(lock, lock_pin)
-    unlock_monitor = MonitorThread(unlock, unlock_pin)
-    lock_monitor.start()
-    unlock_monitor.start()
+    servo = Servo(servo_pin)
+    lock_btn = Button(lock_pin)
+    lock_btn.when_released = lock
+    unlock_btn = Button(unlock_pin)
+    unlock_btn.when_released = unlock
+
+    def move_servo(command):
+        getattr(servo, servo_mapping[command])()
+
+    move_servo(on_startup)
+
+    with Listener(ipc_address) as ipc_listener:
+        while True:
+            with ipc_listener.accept() as conn:
+                move_servo(conn.recv())

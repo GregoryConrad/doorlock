@@ -13,20 +13,28 @@ This is done through:
 - `setup-server.sh` to set up doorlock to run in the background
   - Run `sudo /bin/bash -c "$(curl -fsSL https://github.com/GregoryConrad/doorlock/raw/main/setup-server.sh)"` as the `pi` user to automatically install/configure everything
   - Configures a new `doorlock` user with the necessary permissions
-- GPIO pins (see `servo_control.py`)
-  - Servo: `17`
-  - Lock door push button: `5`
-  - Unlock door push button: `13`
 - Files needed for the server:
   - `client_secret.json` for Google OAuth 2
-  - `authorized_emails.txt` for email whitelisting (with one authorized email per line)
-  - `server.crt` for HTTPS
-    - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
-    - `ln -s /etc/letsencrypt/live/your-domain/fullchain.pem server.crt`
-  - `server.key` for HTTPS
-    - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
-    - `ln -s /etc/letsencrypt/live/your-domain/privkey.pem server.key`
-- Server running on port `39420` (see `gunicorn.conf.py`)
+  - `doorlock.json` for all doorlock configuration (see `example-doorlock.json`)
+    - `authorizedEmails` is a list of authorized emails
+    - `pins` is the GPIO pin mapping
+    - `servoMapping` is what position the servo should be in for lock/unlock
+      - Useful if your mount has the servo positioned in a certain way
+      - Supported values are `max`, `min`, and `mid`
+    - `certfile` is for HTTPS
+      - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
+      - `ln -s /etc/letsencrypt/live/your-domain/fullchain.pem server.crt`
+    - `keyfile` is for HTTPS
+      - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
+      - `ln -s /etc/letsencrypt/live/your-domain/privkey.pem server.key`
+    - `onStartup` indicates whether the lock should lock or unlock when the pi starts up
+      - Useful in case of a power outage
+    - `serverPort` is the port the server will run on
+    - `ipcPort` is the port the monitor process will listen on
+      - You probably don't need to change this
+    - `sessionLifetime` is the number of days for a session lifetime
+    - `sessionSignKey` is the key to sign sessions with
+      - If you omit this field or leave it blank, one will be automatically created for you
 - Port forward the needed port to your pi
   - Use a static ip! I'd recommend making a DHCP reservation
   - Don't port forward for ssh unless you need to

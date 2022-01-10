@@ -1,18 +1,14 @@
 import os
-import string
-import random
 import json
 import datetime
+import base64
 import flask
 import flask_session
 import google.auth.transport.requests
 import google_auth_oauthlib.flow
 import google.oauth2.id_token
 import servo_control
-
-
-def get_file(filename):
-    return os.path.join(os.getcwd(), filename)
+from doorlock_config import config, get_file, refresh_config, update_config
 
 
 # App constants
@@ -21,41 +17,30 @@ SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
     "openid",
 ]
-authorized_emails_file = get_file("authorized_emails.txt")
-app_secret_key_file = get_file("app_secret_key.txt")
 client_secrets_file = get_file("client_secret.json")
 app = flask.Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_USE_SIGNER"] = True
-app.config["PERMANENT_SESSION_LIFETIME"] = datetime.timedelta(days=365)
+app.config["PERMANENT_SESSION_LIFETIME"] = \
+    datetime.timedelta(days=config['sessionLifetime'])
 flask_session.Session(app)
 
 # Get Google client ID
 with open(client_secrets_file, "r") as client_secrets:
     google_client_id = json.load(client_secrets)["web"]["client_id"]
 
-# Get authorized_emails
-authorized_emails = set()
-with open(authorized_emails_file, "r") as emails:
-    for email in emails:
-        authorized_emails.add(email.rstrip())
-if '' in authorized_emails:
-    authorized_emails.remove('')
-
 # Get app.secret_key (create one if it does not exist yet)
-if not os.path.exists(app_secret_key_file):
-    with open(app_secret_key_file, "w") as file:
-        chars = string.ascii_letters + string.digits
-        file.write("".join(random.choice(chars) for i in range(128)))
-with open(app_secret_key_file, "r") as file:
-    app.secret_key = file.read().rstrip()
+if 'sessionSignKey' not in config or len(config['sessionSignKey']) < 1:
+    config['sessionSignKey'] = base64.b64encode(os.urandom(64)).decode('utf-8')
+    update_config(config)
+app.secret_key = config['sessionSignKey']
 
 
 def auth_required(function):
     def wrapper(*args, **kwargs):
         if "email" not in flask.session:
             return flask.redirect("/login")
-        elif flask.session["email"] not in authorized_emails:
+        elif flask.session["email"] not in config['authorizedEmails']:
             flask.session.clear()
             return flask.abort(401)
         else:
@@ -121,6 +106,13 @@ def unlock():
 def lock():
     servo_control.lock()
     return "Door locked!"
+
+
+@app.route("/refresh-authorized-emails")
+@auth_required
+def refresh_authorized_emails():
+    refresh_config()
+    return "Refreshed the authorized email list"
 
 
 # Run the app at localhost:8080

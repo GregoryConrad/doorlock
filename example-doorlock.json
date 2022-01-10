@@ -1,0 +1,21 @@
+{
+	"authorizedEmails": [
+		"gregorysconrad@gmail.com"
+	],
+	"pins": {
+		"servo": 17,
+		"lockButton": 5,
+		"unlockButton": 13
+	},
+	"servoMapping": {
+		"lock": "max",
+		"unlock": "min"
+	},
+	"certfile": "server.crt",
+	"keyfile": "server.key",
+	"onStartup": "unlock",
+	"serverPort": 39420,
+	"ipcPort": 39421,
+	"sessionLifetime": 365,
+	"sessionSignKey": ""
+}
