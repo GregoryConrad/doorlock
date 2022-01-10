@@ -3,7 +3,7 @@
 		"gregorysconrad@gmail.com"
 	],
 	"pins": {
-		"servo": 17,
+		"servo": 12,
 		"lockButton": 5,
 		"unlockButton": 13
 	},
