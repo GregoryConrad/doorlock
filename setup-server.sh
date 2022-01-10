@@ -25,16 +25,8 @@ autostart=true
 autorestart=true
 redirect_stderr=true
 
-[program:lock-door-monitor]
-command=python3 servo_control.py lock_monitor
-directory=$DOORLOCK_PATH
-user=$NEW_USER
-autostart=true
-autorestart=true
-redirect_stderr=true
-
-[program:unlock-door-monitor]
-command=python3 servo_control.py unlock_monitor
+[program:doorlock-monitor]
+command=python3 servo_control.py
 directory=$DOORLOCK_PATH
 user=$NEW_USER
 autostart=true
