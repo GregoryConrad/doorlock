@@ -1,5 +1,6 @@
 from multiprocessing.connection import Listener, Client
 from gpiozero import Servo, Button
+from gpiozero.pins.pigpio import PiGPIOFactory
 from doorlock_config import config
 
 servo_pin = config['pins']['servo']
@@ -21,7 +22,7 @@ def unlock():
 
 
 if __name__ == '__main__':
-    servo = Servo(servo_pin)
+    servo = Servo(servo_pin, pin_factory=PiGPIOFactory())
     lock_btn = Button(lock_pin)
     lock_btn.when_released = lock
     unlock_btn = Button(unlock_pin)

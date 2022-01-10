@@ -10,7 +10,8 @@ fi
 NEW_USER=doorlock
 
 apt update
-apt -y install git supervisor gunicorn python3-pip
+apt -y install git supervisor gunicorn python3-pip python3-pigpio
+systemctl enable pigpiod
 useradd -m -G gpio $NEW_USER
 runuser -l $NEW_USER -c 'git clone https://github.com/GregoryConrad/doorlock'
 runuser -l $NEW_USER -c 'pip3 install -r doorlock/requirements.txt'
