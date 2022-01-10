@@ -3,7 +3,7 @@ from gpiozero import Servo, Button
 from doorlock_config import config
 
 servo_pin = config['pins']['servo']
-lock_pin = config['pins']['lockButon']
+lock_pin = config['pins']['lockButton']
 unlock_pin = config['pins']['unlockButton']
 ipc_address = ('localhost', config['ipcPort'])
 on_startup = config['onStartup']
