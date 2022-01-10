@@ -5,15 +5,13 @@ servo_pin = 17
 lock_pin = 5
 unlock_pin = 13
 
-servo = Servo(servo_pin)
-
 
 def lock():
-    servo.max()
+    Servo(servo_pin).max()
 
 
 def unlock():
-    servo.min()
+    Servo(servo_pin).min()
 
 
 def _generic_monitor(pin, function):
