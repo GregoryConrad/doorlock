@@ -11,6 +11,7 @@ This is done through:
 # Server Setup Suggestions
 - Raspberry Pi OS Lite
 - `setup-server.sh` to set up doorlock to run in the background
+  - Run `sudo /bin/bash -c "$(curl -fsSL https://github.com/GregoryConrad/doorlock/raw/main/setup-server.sh)"` as the `pi` user to automatically install/configure everything
   - Configures a new `doorlock` user with the necessary permissions
 - GPIO pins (see `servo_control.py`)
   - Servo: `17`
