@@ -21,12 +21,8 @@ This is done through:
     - `servoMapping` is what position the servo should be in for lock/unlock
       - Useful if your mount has the servo positioned in a certain way
       - Supported values are `max`, `min`, and `mid`
-    - `certfile` is for HTTPS
-      - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
-      - `ln -s /etc/letsencrypt/live/your-domain/fullchain.pem server.crt`
-    - `keyfile` is for HTTPS
-      - You can run the following command (replacing `your-domain` as appropriate) if you are using Let's Encrypt
-      - `ln -s /etc/letsencrypt/live/your-domain/privkey.pem server.key`
+    - `certfile` is for HTTPS (make sure the `doorlock` user has permission to access the file!)
+    - `keyfile` is for HTTPS (make sure the `doorlock` user has permission to access the file!)
     - `onStartup` indicates whether the lock should lock or unlock when the pi starts up
       - Useful in case of a power outage
     - `serverPort` is the port the server will run on

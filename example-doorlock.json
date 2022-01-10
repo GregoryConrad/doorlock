@@ -11,8 +11,8 @@
 		"lock": "max",
 		"unlock": "min"
 	},
-	"certfile": "server.crt",
-	"keyfile": "server.key",
+	"certfile": "/etc/letsencrypt/live/example.com/fullchain.pem",
+	"keyfile": "/etc/letsencrypt/live/example.com/privkey.pem",
 	"onStartup": "unlock",
 	"serverPort": 39420,
 	"ipcPort": 39421,
