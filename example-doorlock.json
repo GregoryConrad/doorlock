@@ -8,8 +8,8 @@
 		"unlockButton": 13
 	},
 	"servoMapping": {
-		"lock": "min",
-		"unlock": "max"
+		"lock": "max",
+		"unlock": "min"
 	},
 	"certfile": "/etc/letsencrypt/live/example.com/fullchain.pem",
 	"keyfile": "/etc/letsencrypt/live/example.com/privkey.pem",
