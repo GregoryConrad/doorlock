@@ -43,7 +43,7 @@ See the below screenshots for reference when creating your own Siri Shortcuts:
 
 | Siri Shortcut Application | Lock Shortcut Example | Unlock Shortcut Example |
 | --- | --- | --- |
-| ![](/screenshots/shortcut-app.png?raw=true) | ![](/screenshots/lock-shortcut.png?raw=true) | ![](/screenshots/unlock-shortcut.png?raw=true) |
+| ![](/images/shortcut-app.png?raw=true) | ![](/images/lock-shortcut.png?raw=true) | ![](/images/unlock-shortcut.png?raw=true) |
 
 Notes:
 - Replace `example.com` with your domain or your Raspberry Pi's static ip (and port if needed)
@@ -56,4 +56,4 @@ Notes:
     2. Click on the last request made
     3. Scroll to the Request Headers
     4. Your session id will be to the right of `Cookie:`. Paste this as-is into the automation
-    5. Screenshot from Chrome: ![Chrome Devtools Screenshot](/screenshots/get-cookie-devtools.jpeg?raw=true)
+    5. Screenshot from Chrome: ![Chrome Devtools Screenshot](/images/get-cookie-devtools.jpeg?raw=true)
