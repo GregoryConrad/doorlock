@@ -7,11 +7,12 @@ This is done through:
   - Google accounts used for authentication (with an email whitelist)
 - Two background processes that listen to lock/unlock button presses
   - Used as a manual override in case your internet goes down or you don't want to get out your phone
+![Final Product](/images/full-setup.png?raw=true)
 
-# Server Setup Suggestions
+# Setup Suggestions
 - Raspberry Pi OS Lite
-- `setup-server.sh` to set up doorlock to run in the background
-  - Run `sudo /bin/bash -c "$(curl -fsSL https://github.com/GregoryConrad/doorlock/raw/main/setup-server.sh)"` as the `pi` user to automatically install/configure everything
+- `setup.sh` to set up doorlock to run in the background
+  - Run `sudo /bin/bash -c "$(curl -fsSL https://github.com/GregoryConrad/doorlock/raw/main/setup.sh)"` as the `pi` user to automatically install/configure everything
   - Configures a new `doorlock` user with the necessary permissions
 - Files needed for the server:
   - `client_secret.json` for Google OAuth 2

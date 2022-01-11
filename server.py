@@ -7,7 +7,7 @@ import flask_session
 import google.auth.transport.requests
 import google_auth_oauthlib.flow
 import google.oauth2.id_token
-import servo_control
+import monitor
 from doorlock_config import config, get_file, refresh_config, update_config
 
 
@@ -97,14 +97,14 @@ def index():
 @app.route("/unlock")
 @auth_required
 def unlock():
-    servo_control.unlock()
+    monitor.unlock()
     return "Door unlocked!"
 
 
 @app.route("/lock")
 @auth_required
 def lock():
-    servo_control.lock()
+    monitor.lock()
     return "Door locked!"
 
 
