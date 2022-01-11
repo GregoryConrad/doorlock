@@ -109,7 +109,6 @@ def lock():
 
 
 @app.route("/refresh-authorized-emails")
-@auth_required
 def refresh_authorized_emails():
     refresh_config()
     return "Refreshed the authorized email list"
