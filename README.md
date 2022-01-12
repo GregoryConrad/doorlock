@@ -7,7 +7,9 @@ This is done through:
   - Google accounts used for authentication (with an email whitelist)
 - Two background processes that listen to lock/unlock button presses
   - Used as a manual override in case your internet goes down or you don't want to get out your phone
-![Final Product](/images/full-setup.png?raw=true)
+
+Here it is on my door, configured with a battery backup:
+![Final Product](/images/final-product.jpg?raw=true)
 
 # Setup Suggestions
 - Raspberry Pi OS Lite
