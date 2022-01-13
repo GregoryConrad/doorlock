@@ -26,7 +26,7 @@ Here it is on my door, configured with a battery backup:
       - Supported values are `max`, `min`, and `mid`
     - `certfile` is for HTTPS (make sure the `doorlock` user has permission to access the file!)
     - `keyfile` is for HTTPS (make sure the `doorlock` user has permission to access the file!)
-    - `onStartup` indicates whether the lock should lock or unlock when the pi starts up
+    - `onStartup` indicates whether the lock should `lock`, `unlock`, or `nothing` (don't attach the servo) when the pi starts up
       - Useful in case of a power outage
     - `serverPort` is the port the server will run on
     - `ipcPort` is the port the monitor process will listen on
