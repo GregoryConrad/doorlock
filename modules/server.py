@@ -7,8 +7,8 @@ import flask_session
 import google.auth.transport.requests
 import google_auth_oauthlib.flow
 import google.oauth2.id_token
-import monitor
-from doorlock_config import config, get_file, refresh_config, update_config
+import modules.controller as controller
+from config.doorlock import get_config_file, session_lifetime, session_sign_key, authorized_emails
 
 
 # App constants
@@ -17,30 +17,24 @@ SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
     "openid",
 ]
-client_secrets_file = get_file("client_secret.json")
+client_secrets_file = get_config_file("client_secret.json")
 app = flask.Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_USE_SIGNER"] = True
-app.config["PERMANENT_SESSION_LIFETIME"] = \
-    datetime.timedelta(days=config['sessionLifetime'])
+app.config["PERMANENT_SESSION_LIFETIME"] = session_lifetime
+app.secret_key = session_sign_key
 flask_session.Session(app)
 
 # Get Google client ID
 with open(client_secrets_file, "r") as client_secrets:
     google_client_id = json.load(client_secrets)["web"]["client_id"]
 
-# Get app.secret_key (create one if it does not exist yet)
-if 'sessionSignKey' not in config or len(config['sessionSignKey']) < 1:
-    config['sessionSignKey'] = base64.b64encode(os.urandom(64)).decode('utf-8')
-    update_config(config)
-app.secret_key = config['sessionSignKey']
-
 
 def auth_required(function):
     def wrapper(*args, **kwargs):
         if "email" not in flask.session:
             return flask.redirect("/login")
-        elif flask.session["email"] not in config['authorizedEmails']:
+        elif flask.session["email"] not in authorized_emails:
             flask.session.clear()
             return flask.abort(401)
         else:
@@ -97,21 +91,15 @@ def index():
 @app.route("/unlock")
 @auth_required
 def unlock():
-    monitor.unlock()
+    controller.unlock()
     return "Door unlocked!"
 
 
 @app.route("/lock")
 @auth_required
 def lock():
-    monitor.lock()
+    controller.lock()
     return "Door locked!"
-
-
-@app.route("/refresh-authorized-emails")
-def refresh_authorized_emails():
-    refresh_config()
-    return "Refreshed the authorized email list"
 
 
 # Run the app at localhost:8080
