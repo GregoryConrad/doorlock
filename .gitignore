@@ -1,6 +1,5 @@
-# doorlock specific files
-client_secret.json
-doorlock.json
+# Application specific files
+config/client_secret.json
 flask_session
 
 # Byte-compiled / optimized / DLL files
