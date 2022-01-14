@@ -1,3 +1,6 @@
+# This is an example to base your configuration off of.
+# DO NOT USE THIS FILE AS IS; IT WILL NOT WORK!!!
+
 from pathlib import Path
 from datetime import timedelta
 from os import urandom
