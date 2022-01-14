@@ -33,7 +33,7 @@ ipc_address = ('localhost', 39421)  # you probably don't need to change
 ipc_key = b64decode(get_key('ipc_key.txt'))  # key to authenticate ipc
 
 # Server module configuration (if you are running the web server)
-authorizedEmails = {
+authorized_emails = {
     'gregorysconrad@gmail.com',
 }  # set of Google accounts that can control the lock
 # Note: you need to be root or have permission to bind to ports less than 1024

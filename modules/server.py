@@ -1,12 +1,10 @@
 import os
 import json
-import datetime
-import base64
-import flask
-import flask_session
-import google.auth.transport.requests
-import google_auth_oauthlib.flow
-import google.oauth2.id_token
+from flask import Flask, session, request, redirect, abort, url_for
+from flask_session import Session
+from google.oauth2.id_token import verify_oauth2_token
+from google_auth_oauthlib.flow import Flow
+from google.auth.transport.requests import Request
 import modules.controller as controller
 from config.doorlock import get_config_file, session_lifetime, session_sign_key, authorized_emails
 
@@ -18,12 +16,12 @@ SCOPES = [
     "openid",
 ]
 client_secrets_file = get_config_file("client_secret.json")
-app = flask.Flask(__name__)
+app = Flask(__name__)
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_USE_SIGNER"] = True
 app.config["PERMANENT_SESSION_LIFETIME"] = session_lifetime
 app.secret_key = session_sign_key
-flask_session.Session(app)
+Session(app)
 
 # Get Google client ID
 with open(client_secrets_file, "r") as client_secrets:
@@ -32,11 +30,11 @@ with open(client_secrets_file, "r") as client_secrets:
 
 def auth_required(function):
     def wrapper(*args, **kwargs):
-        if "email" not in flask.session:
-            return flask.redirect("/login")
-        elif flask.session["email"] not in authorized_emails:
-            flask.session.clear()
-            return flask.abort(401)
+        if "email" not in session:
+            return redirect("/login")
+        elif session["email"] not in authorized_emails:
+            session.clear()
+            return abort(401)
         else:
             return function()
     wrapper.__name__ = function.__name__
@@ -45,41 +43,41 @@ def auth_required(function):
 
 @app.route("/login")
 def login():
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
+    flow = Flow.from_client_secrets_file(
         client_secrets_file, SCOPES)
-    flow.redirect_uri = flask.url_for("login_callback", _external=True)
+    flow.redirect_uri = url_for("login_callback", _external=True)
     authorization_url, state = flow.authorization_url(
         access_type="offline", include_granted_scopes="true")
-    flask.session["state"] = state
-    return flask.redirect(authorization_url)
+    session["state"] = state
+    return redirect(authorization_url)
 
 
 @app.route("/login-callback")
 def login_callback():
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        client_secrets_file, SCOPES, state=flask.session["state"])
-    flow.redirect_uri = flask.url_for("login_callback", _external=True)
-    flow.fetch_token(authorization_response=flask.request.url)
+    flow = Flow.from_client_secrets_file(
+        client_secrets_file, SCOPES, state=session["state"])
+    flow.redirect_uri = url_for("login_callback", _external=True)
+    flow.fetch_token(authorization_response=request.url)
 
-    if flask.session["state"] != flask.request.args["state"]:
-        return flask.abort(500)
+    if session["state"] != request.args["state"]:
+        return abort(500)
 
-    id_info = google.oauth2.id_token.verify_oauth2_token(
+    id_info = verify_oauth2_token(
         id_token=flow.credentials._id_token,
-        request=google.auth.transport.requests.Request(),
+        request=Request(),
         audience=google_client_id,
     )
 
-    flask.session["name"] = id_info.get("name")
+    session["name"] = id_info.get("name")
     if id_info.get("email_verified"):
-        flask.session["email"] = id_info.get("email")
-    return flask.redirect("/")
+        session["email"] = id_info.get("email")
+    return redirect("/")
 
 
 @app.route("/")
 @auth_required
 def index():
-    return f"""Hello {flask.session["name"]}! Here are your options:
+    return f"""Hello {session["name"]}! Here are your options:
 <br>
 <form>
   <button formaction="/lock">Lock door</button>
