@@ -42,8 +42,8 @@ authorized_emails = {
 # Note: you need to be root or have permission to bind to ports less than 1024
 # Thus, I'd recommend keeping this port as-is and just port forward to it
 server_port = 39420  # port the web server runs on
-certfile = "/etc/letsencrypt/live/example.com/fullchain.pem",  # certfile for HTTPS
-keyfile = "/etc/letsencrypt/live/example.com/privkey.pem",  # keyfile for HTTPS
+certfile = "/etc/letsencrypt/live/example.com/fullchain.pem"  # certfile for HTTPS
+keyfile = "/etc/letsencrypt/live/example.com/privkey.pem"  # keyfile for HTTPS
 session_lifetime = timedelta(days=365)  # how long cookie sessions should last
 # Don't change the following unless you know what you are doing
 session_sign_key = get_key('session_sign_key.txt')  # key to sign cookies
