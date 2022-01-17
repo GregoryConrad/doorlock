@@ -8,7 +8,7 @@ from base64 import b64encode, b64decode
 
 
 def get_config_file(filename):
-    Path(__file__).parent / filename
+    return Path(__file__).parent / filename
 
 
 def get_key(filename):
