@@ -25,5 +25,6 @@ files=$APPLICATION_PATH/config/supervisor.conf
 EOF
 
 # Finalization
+printf "\n\n"
 echo "Please configure the needed files in $APPLICATION_PATH/config in accordance with $APPLICATION_PATH/README.md"
 echo "After configuration is complete, reboot the Raspberry Pi"
