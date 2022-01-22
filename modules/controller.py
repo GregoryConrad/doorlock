@@ -26,16 +26,17 @@ if __name__ == '__main__':
         if command not in servo_mapping:
             return
 
+        getattr(servo, servo_mapping[command])()
+
         if servo_power_control_pin is not None:
             with OutputDevice(servo_power_control_pin) as servo_switch:
                 servo_switch.on()
-                getattr(servo, servo_mapping[command])()
                 sleep(1)
                 servo_switch.off()
         else:
-            getattr(servo, servo_mapping[command])()
             sleep(1)
-            servo.detach()
+
+        servo.detach()
 
     move_servo(on_startup)
 
